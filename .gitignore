@@ -1,0 +1,31 @@
+# --- PlatformIO ---
+.pio/
+.pioenvs/
+.piolibdeps/
+libdeps/
+vcs.json
+.gcc-flags.json
+
+# --- VS Code ---
+.vscode/.browse.c_cpp.db*
+.vscode/.estimator.json
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/ipch/
+.vscode/project.db*
+
+# --- Build Outputs ---
+*.ext
+*.elf
+*.bin
+*.map
+*.hex
+
+# --- System Files ---
+.DS_Store
+Thumbs.db
+
+# --- Secrets & Config ---
+# It is a best practice to keep credentials in a separate file.
+# If you create a 'secrets.h' or 'config_local.h', uncomment the line below:
+# src/secrets.h
