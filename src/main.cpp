@@ -3,10 +3,12 @@
 #include "Config.h"
 #include "StatusIndicator.h"
 #include "NetworkManager.h"
+#include "NotificationSound.h"
 
 // Instancias de nuestras Clases
 StatusIndicator indicator(Config::PIN_RGB_LED, Config::NUM_PIXELS);
 NetworkManager network("OrderPulse-Client-3");
+NotificationSound buzzer(Config::PIN_BUZZER, Config::BUZZER_VOLUME);
 
 // El callback se queda aquí porque es Lógica de Negocio:
 // Define QUÉ hacer con los datos recibidos.
@@ -20,6 +22,9 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
 
   Serial.printf(">>> Order #%d is now: %s\n", orderId, status);
   indicator.update(status);
+
+  if (strcmp(status, "ready") == 0)
+    buzzer.playOrderReady();
 }
 
 void setup()
@@ -27,6 +32,7 @@ void setup()
   Serial.begin(115200);
 
   indicator.begin();
+  buzzer.begin();
   // Le pasamos nuestra función de callback al manager
   network.begin(mqttCallback);
 }

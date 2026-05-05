@@ -21,6 +21,9 @@ namespace Config
     // Hardware Pins
     inline const int PIN_RGB_LED = 48;
     inline const int NUM_PIXELS = 1;
+    inline const int PIN_BUZZER = 5;
+    // Volumen del buzzer: duty cycle 0-255 (8-bit). ~25 = suave, 128 = máximo.
+    inline const int BUZZER_VOLUME = 45;
 }
 
 #endif
