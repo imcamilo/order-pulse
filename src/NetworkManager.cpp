@@ -38,7 +38,7 @@ void NetworkManager::loop()
         Serial.print("[MQTT] Attempting connection... ");
         if (_mqttClient.connect(_clientId))
         {
-            Serial.println("Connected!");
+            // Serial.println("Connected!");
             _mqttClient.subscribe(Config::TOPIC_STATUS.c_str());
         }
         else

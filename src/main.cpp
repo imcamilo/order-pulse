@@ -7,7 +7,7 @@
 
 // Instancias de nuestras Clases
 StatusIndicator indicator(Config::PIN_RGB_LED, Config::NUM_PIXELS);
-NetworkManager network("OrderPulse-Client-3");
+NetworkManager network(Config::MQTT_CLIENT_ID.c_str());
 NotificationSound buzzer(Config::PIN_BUZZER, Config::BUZZER_VOLUME);
 
 // El callback se queda aquí porque es Lógica de Negocio:
@@ -41,4 +41,5 @@ void loop()
 {
   // El manager se encarga de WiFi, MQTT y reconexiones automáticamente
   network.loop();
+  buzzer.tick();
 }
