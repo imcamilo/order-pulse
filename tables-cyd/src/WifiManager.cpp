@@ -4,15 +4,22 @@
 WifiManager::WifiManager(const char *ssid, const char *pass)
     : _ssid(ssid), _pass(pass) {}
 
-void WifiManager::begin()
+bool WifiManager::begin()
 {
-    _connectBlocking();
+    return _attemptConnect();
 }
 
 void WifiManager::loop()
 {
-    if (WiFi.status() != WL_CONNECTED)
-        _connectBlocking();
+    if (WiFi.status() == WL_CONNECTED)
+        return;
+
+    const uint32_t now = millis();
+    if (now - _lastReconnectAttempt < RECONNECT_INTERVAL_MS)
+        return;
+
+    _lastReconnectAttempt = now;
+    _attemptConnect();
 }
 
 bool WifiManager::isConnected()
@@ -25,14 +32,21 @@ WiFiClient &WifiManager::client()
     return _tcpClient;
 }
 
-void WifiManager::_connectBlocking()
+bool WifiManager::_attemptConnect()
 {
-    Serial.printf("\n[WiFi] Connecting to %s...", _ssid);
+    Serial.printf("[WiFi] Connecting to %s\n", _ssid);
     WiFi.begin(_ssid, _pass);
+
+    const uint32_t start = millis();
     while (WiFi.status() != WL_CONNECTED)
     {
-        delay(500);
-        Serial.print(".");
+        if (millis() - start >= CONNECT_TIMEOUT_MS)
+        {
+            Serial.println("[WiFi] timeout");
+            return false;
+        }
+        delay(100);
     }
-    Serial.printf("\n[WiFi] Connected! IP: %s\n", WiFi.localIP().toString().c_str());
+    Serial.printf("[WiFi] OK ip=%s\n", WiFi.localIP().toString().c_str());
+    return true;
 }

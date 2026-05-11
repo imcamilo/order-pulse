@@ -3,20 +3,25 @@
 
 #include <WiFi.h>
 
-// Owns WiFi connection lifecycle. Exposes the underlying WiFiClient so
-// MQTT (or any other TCP-based component) can use it.
+// Owns WiFi connection lifecycle. begin() attempts a single bounded
+// connection. loop() retries periodically (non-blocking) if the link drops.
 class WifiManager
 {
+public:
+    static constexpr uint32_t CONNECT_TIMEOUT_MS    = 15000;
+    static constexpr uint32_t RECONNECT_INTERVAL_MS = 5000;
+
 private:
     const char *_ssid;
     const char *_pass;
     WiFiClient _tcpClient;
+    uint32_t _lastReconnectAttempt = 0;
 
-    void _connectBlocking();
+    bool _attemptConnect();
 
 public:
     WifiManager(const char *ssid, const char *pass);
-    void begin();
+    bool begin();
     void loop();
     bool isConnected();
     WiFiClient &client();

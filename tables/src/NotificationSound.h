@@ -2,12 +2,13 @@
 #define NOTIFICATION_SOUND_H
 
 #include <Arduino.h>
+#include "INotificationSound.h"
 #include "StatusLogic.h"
 
 // Non-blocking buzzer: holds a note sequence and advances note by note
 // on each tick(). The "which sequence to play" decision lives in StatusLogic,
 // keeping this class focused on the LEDC hardware path.
-class NotificationSound
+class NotificationSound : public INotificationSound
 {
 private:
     using Note = StatusLogic::Note;
@@ -79,7 +80,7 @@ public:
     }
 
     // Plays the "order ready" motif. Ignores re-triggers while playing.
-    void playOrderReady()
+    void playOrderReady() override
     {
         if (isPlaying())
             return;

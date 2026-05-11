@@ -15,16 +15,23 @@ void MqttClient::subscribeOnConnect(const char *topic)
     _topicToSubscribe = topic;
 }
 
-void MqttClient::begin()
+bool MqttClient::begin()
 {
     _client.setServer(_broker, _port);
-    _connectBlocking();
+    return _attemptConnect();
 }
 
 void MqttClient::loop()
 {
     if (!_client.connected())
-        _connectBlocking();
+    {
+        const uint32_t now = millis();
+        if (now - _lastReconnectAttempt >= RECONNECT_INTERVAL_MS)
+        {
+            _lastReconnectAttempt = now;
+            _attemptConnect();
+        }
+    }
     _client.loop();
 }
 
@@ -38,24 +45,19 @@ bool MqttClient::publish(const char *topic, const char *payload)
     return _client.publish(topic, payload);
 }
 
-void MqttClient::_connectBlocking()
+bool MqttClient::_attemptConnect()
 {
-    while (!_client.connected())
+    Serial.print("[MQTT] Connecting... ");
+    if (_client.connect(_clientId))
     {
-        Serial.print("[MQTT] connecting... ");
-        if (_client.connect(_clientId))
+        Serial.println("ok");
+        if (_topicToSubscribe != nullptr)
         {
-            Serial.println("ok");
-            if (_topicToSubscribe != nullptr)
-            {
-                _client.subscribe(_topicToSubscribe);
-                Serial.printf("[MQTT] subscribed to %s\n", _topicToSubscribe);
-            }
+            _client.subscribe(_topicToSubscribe);
+            Serial.printf("[MQTT] subscribed to %s\n", _topicToSubscribe);
         }
-        else
-        {
-            Serial.printf("failed rc=%d, retry in 2s\n", _client.state());
-            delay(2000);
-        }
+        return true;
     }
+    Serial.printf("failed rc=%d\n", _client.state());
+    return false;
 }

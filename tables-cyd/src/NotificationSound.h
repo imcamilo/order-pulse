@@ -2,11 +2,12 @@
 #define NOTIFICATION_SOUND_H
 
 #include <Arduino.h>
+#include "INotificationSound.h"
 #include "StatusLogic.h"
 
 // Non-blocking buzzer. The "which sequence to play" decision lives in
 // StatusLogic; this class only knows about timing and LEDC hardware.
-class NotificationSound
+class NotificationSound : public INotificationSound
 {
 private:
     using Note = StatusLogic::Note;
@@ -72,7 +73,7 @@ public:
 
     // Plays the sequence matching the given status. Ignores re-triggers
     // while a sequence is in progress, and unknown statuses (nullptr).
-    void playForStatus(const char *status)
+    void playForStatus(const char *status) override
     {
         if (isPlaying()) return;
         int len;

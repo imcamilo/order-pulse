@@ -3,23 +3,23 @@
 
 #include "PayloadParser.h"
 
-class StatusIndicator;
-class StatusDisplay;
-class NotificationSound;
+class IStatusIndicator;
+class IStatusDisplay;
+class INotificationSound;
 
 // Reacts to a parsed order event by driving the table's peripherals.
-// Decoupled from MQTT/JSON so the parsing can be tested in isolation.
+// Accepts abstract interfaces so tests can inject mocks.
 class OrderEventHandler
 {
 private:
-    StatusIndicator *_indicator;
-    StatusDisplay *_display;
-    NotificationSound *_buzzer;
+    IStatusIndicator *_indicator;
+    IStatusDisplay *_display;
+    INotificationSound *_buzzer;
 
 public:
-    OrderEventHandler(StatusIndicator *indicator,
-                      StatusDisplay *display,
-                      NotificationSound *buzzer);
+    OrderEventHandler(IStatusIndicator *indicator,
+                      IStatusDisplay *display,
+                      INotificationSound *buzzer);
     void handle(const OrderEvent &evt);
 };
 

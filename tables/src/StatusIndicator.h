@@ -2,8 +2,9 @@
 #define STATUS_INDICATOR_H
 
 #include <Adafruit_NeoPixel.h>
+#include "IStatusIndicator.h"
 
-class StatusIndicator
+class StatusIndicator : public IStatusIndicator
 {
 private:
     Adafruit_NeoPixel _led;
@@ -11,7 +12,7 @@ private:
 public:
     StatusIndicator(int pin, int numPixels);
     void begin();
-    void update(const char *status);
+    void update(const char *status) override;
 };
 
 #endif
