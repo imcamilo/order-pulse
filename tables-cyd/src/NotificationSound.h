@@ -2,19 +2,20 @@
 #define NOTIFICATION_SOUND_H
 
 #include <Arduino.h>
+#include "StatusLogic.h"
 
-// Non-blocking buzzer: builds a note sequence and plays it advancing
-// note by note on each tick(). playForStatus() ignores retriggers while playing.
+// Non-blocking buzzer. The "which sequence to play" decision lives in
+// StatusLogic; this class only knows about timing and LEDC hardware.
 class NotificationSound
 {
 private:
+    using Note = StatusLogic::Note;
+
     int _pin;
     uint8_t _volume;
     uint8_t _channel;
 
-    struct Note { uint32_t freq; uint32_t durMs; };  // freq=0 means silence
     static constexpr int MAX_NOTES = 16;
-
     Note _seq[MAX_NOTES];
     int _seqLen = 0;
     int _seqIdx = 0;
@@ -69,34 +70,15 @@ public:
         }
     }
 
-    // Dispatches the sound matching the given status.
+    // Plays the sequence matching the given status. Ignores re-triggers
+    // while a sequence is in progress, and unknown statuses (nullptr).
     void playForStatus(const char *status)
     {
         if (isPlaying()) return;
-
-        if (strcmp(status, "pending") == 0)
-        {
-            static const Note seq[] = {{1500, 200}};
-            _setSequence(seq, 1);
-        }
-        else if (strcmp(status, "preparing") == 0)
-        {
-            static const Note seq[] = {
-                {2000, 150}, {0, 80}, {2000, 150}
-            };
-            _setSequence(seq, 3);
-        }
-        else if (strcmp(status, "ready") == 0)
-        {
-            // Beethoven 5th, fate motif: G G G Eb (G6/Eb6)
-            static const Note seq[] = {
-                {1568, 150}, {0, 50},
-                {1568, 150}, {0, 50},
-                {1568, 150}, {0, 50},
-                {1244, 800}
-            };
-            _setSequence(seq, 7);
-        }
+        int len;
+        const Note *seq = StatusLogic::sequenceForStatus(status, len);
+        if (seq != nullptr)
+            _setSequence(seq, len);
     }
 };
 

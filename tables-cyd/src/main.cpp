@@ -1,34 +1,33 @@
 #include <Arduino.h>
-#include <ArduinoJson.h>
 #include <TFT_eSPI.h>
 #include "Config.h"
-#include "NetworkManager.h"
 #include "StatusIndicator.h"
 #include "StatusDisplay.h"
 #include "NotificationSound.h"
+#include "WifiManager.h"
+#include "MqttClient.h"
+#include "PayloadParser.h"
+#include "OrderEventHandler.h"
 
-// Instances
-TFT_eSPI tft;
-NetworkManager   network(Config::MQTT_CLIENT_ID.c_str());
-StatusIndicator  indicator(Config::PIN_RGB_R, Config::PIN_RGB_G, Config::PIN_RGB_B);
-StatusDisplay    display(&tft, Config::TABLE_ID);
+// Hardware instances
+TFT_eSPI          tft;
+StatusIndicator   indicator(Config::PIN_RGB_R, Config::PIN_RGB_G, Config::PIN_RGB_B);
+StatusDisplay     display(&tft, Config::TABLE_ID);
 NotificationSound buzzer(Config::PIN_BUZZER, Config::BUZZER_VOLUME);
 
-// MQTT callback: parses the JSON and triggers display + LED + buzzer.
+// Networking instances
+WifiManager wifi(Config::WIFI_SSID, Config::WIFI_PASS);
+MqttClient  mqtt(wifi.client(), Config::MQTT_BROKER, Config::MQTT_PORT,
+                 Config::MQTT_CLIENT_ID.c_str());
+
+// Event pipeline (pure parser -> hardware-aware handler)
+OrderEventHandler eventHandler(&indicator, &display, &buzzer);
+
 void mqttCallback(char *topic, byte *payload, unsigned int length)
 {
-    JsonDocument doc;
-    deserializeJson(doc, payload, length);
-
-    const char *status = doc["status"] | "unknown";
-    int orderId       = doc["order"]  | 0;
-    const char *eta   = doc["eta"]    | "-";
-
-    Serial.printf(">>> Order #%d -> %s (eta %s)\n", orderId, status, eta);
-
-    display.update(status, orderId, eta);
-    indicator.update(status);
-    buzzer.playForStatus(status);
+    OrderEvent evt;
+    if (PayloadParser::parse(payload, length, evt))
+        eventHandler.handle(evt);
 }
 
 void setup()
@@ -48,11 +47,15 @@ void setup()
     buzzer.begin();
     display.begin();
 
-    network.begin(mqttCallback);
+    wifi.begin();
+    mqtt.setCallback(mqttCallback);
+    mqtt.subscribeOnConnect(Config::TOPIC_STATUS.c_str());
+    mqtt.begin();
 }
 
 void loop()
 {
-    network.loop();
+    wifi.loop();
+    mqtt.loop();
     buzzer.tick();
 }

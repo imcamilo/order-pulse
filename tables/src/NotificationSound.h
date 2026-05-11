@@ -2,20 +2,19 @@
 #define NOTIFICATION_SOUND_H
 
 #include <Arduino.h>
+#include "StatusLogic.h"
 
+// Non-blocking buzzer: holds a note sequence and advances note by note
+// on each tick(). The "which sequence to play" decision lives in StatusLogic,
+// keeping this class focused on the LEDC hardware path.
 class NotificationSound
 {
 private:
+    using Note = StatusLogic::Note;
+
     int _pin;
     uint8_t _volume;
     uint8_t _channel;
-
-    // A note of the melody: freq=0 means silence.
-    struct Note
-    {
-        uint32_t freq;
-        uint32_t durMs;
-    };
 
     static constexpr int MAX_NOTES = 16;
     Note _seq[MAX_NOTES];
@@ -79,27 +78,14 @@ public:
         }
     }
 
-    // Beethoven 5th, fate motif: G G G Eb (one octave up).
-    // If already playing, re-triggers are ignored.
+    // Plays the "order ready" motif. Ignores re-triggers while playing.
     void playOrderReady()
     {
         if (isPlaying())
             return;
-        static const Note motif[] = {
-            {1568, 150}, {0, 50},
-            {1568, 150}, {0, 50},
-            {1568, 150}, {0, 50},
-            {1244, 800}
-        };
-        _setSequence(motif, sizeof(motif) / sizeof(motif[0]));
-    }
-
-    void playError()
-    {
-        if (isPlaying())
-            return;
-        static const Note seq[] = {{400, 500}};
-        _setSequence(seq, sizeof(seq) / sizeof(seq[0]));
+        int len;
+        const Note *seq = StatusLogic::readyMotif(len);
+        _setSequence(seq, len);
     }
 };
 

@@ -2,15 +2,20 @@
 #include <ArduinoJson.h>
 #include <TFT_eSPI.h>
 #include "Config.h"
-#include "NetworkManager.h"
+#include "WifiManager.h"
+#include "MqttClient.h"
 #include "Touch.h"
 #include "UIManager.h"
 
-// Instances of our classes
-TFT_eSPI tft;
-NetworkManager network(Config::MQTT_CLIENT_ID);
-Touch touch;
+// Hardware instances
+TFT_eSPI  tft;
+Touch     touch;
 UIManager ui(&tft);
+
+// Networking instances
+WifiManager wifi(Config::WIFI_SSID, Config::WIFI_PASS);
+MqttClient  mqtt(wifi.client(), Config::MQTT_BROKER, Config::MQTT_PORT,
+                 Config::MQTT_CLIENT_ID);
 
 // Callback fired by the UI when a status is selected.
 // Defines WHAT to do (publish the matching topic with JSON payload).
@@ -35,7 +40,7 @@ void onStatusSelected(int tableId, const char *status)
     char payload[128];
     serializeJson(doc, payload, sizeof(payload));
 
-    if (network.publish(topic, payload))
+    if (mqtt.publish(topic, payload))
         Serial.printf(">>> %s : %s\n", topic, payload);
     else
         Serial.printf(">>> publish FAILED: %s\n", topic);
@@ -57,13 +62,15 @@ void setup()
     tft.drawString("Booting...", 10, 10, 2);
 
     touch.begin();
-    network.begin();
+    wifi.begin();
+    mqtt.begin();
     ui.begin(onStatusSelected);
 }
 
 void loop()
 {
-    network.loop();
+    wifi.loop();
+    mqtt.loop();
     ui.tick();
 
     int x, y;
