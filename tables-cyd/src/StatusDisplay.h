@@ -3,11 +3,11 @@
 
 #include <TFT_eSPI.h>
 
-// Dibuja el estado del pedido en la pantalla CYD.
+// Draws the order status on the CYD screen.
 // Layout (320x240 landscape):
-//   - Header arriba: "MESA N" en grande
-//   - Caja central: nombre del estado (PENDIENTE/PREPARANDO/LISTO) con color de fondo
-//   - Línea inferior: "Orden #X" + "Tiempo estimado: Y"
+//   - Top header: "MESA N" in a large font
+//   - Center box: status name (PENDIENTE/PREPARANDO/LISTO) on a colored background
+//   - Bottom line: "Orden #X" + "Tiempo estimado: Y"
 class StatusDisplay
 {
 private:

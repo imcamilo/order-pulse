@@ -11,8 +11,8 @@ private:
     XPT2046_Touchscreen _ts;
     uint32_t _lastReadAt;
 
-    // Calibración aproximada para CYD v1 en rotación landscape (rot=1).
-    // Si el touch responde fuera del botón, ajusta estos valores.
+    // Approximate calibration for CYD v1 in landscape rotation (rot=1).
+    // If touch reacts outside the button area, tweak these values.
     static constexpr int RAW_X_MIN = 200;
     static constexpr int RAW_X_MAX = 3700;
     static constexpr int RAW_Y_MIN = 240;
@@ -22,8 +22,8 @@ public:
     Touch();
     void begin();
 
-    // Devuelve true si hay un toque y rellena (x, y) en coords de pantalla
-    // (320x240 landscape). Hace debounce interno de 200ms.
+    // Returns true if touched and fills (x, y) in screen coordinates
+    // (320x240 landscape). Internal 200ms debounce.
     bool readPoint(int &x, int &y);
 };
 

@@ -6,14 +6,14 @@
 #include "Touch.h"
 #include "UIManager.h"
 
-// Instancias de nuestras Clases
+// Instances of our classes
 TFT_eSPI tft;
 NetworkManager network(Config::MQTT_CLIENT_ID);
 Touch touch;
 UIManager ui(&tft);
 
-// Callback que dispara la UI al seleccionar un estado.
-// Define QUÉ hacer (publicar el topic correspondiente con el JSON).
+// Callback fired by the UI when a status is selected.
+// Defines WHAT to do (publish the matching topic with JSON payload).
 void onStatusSelected(int tableId, const char *status)
 {
     char topic[48];

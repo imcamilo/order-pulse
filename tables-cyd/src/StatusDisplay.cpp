@@ -1,6 +1,6 @@
 #include "StatusDisplay.h"
 
-// Coordenadas en landscape 320x240
+// Coordinates in 320x240 landscape
 static constexpr int HEADER_Y     = 30;
 static constexpr int BOX_X        = 20;
 static constexpr int BOX_Y        = 80;
@@ -24,7 +24,7 @@ void StatusDisplay::drawHeader()
     snprintf(buf, sizeof(buf), "MESA %d", _tableId);
     _tft->setTextDatum(MC_DATUM);
     _tft->setTextColor(TFT_WHITE, TFT_BLACK);
-    _tft->drawString(buf, 160, HEADER_Y, 6); // font 6 grande
+    _tft->drawString(buf, 160, HEADER_Y, 6); // font 6, large
 }
 
 void StatusDisplay::drawStatusBox(const char *statusUpper, uint16_t bgColor)
@@ -39,7 +39,7 @@ void StatusDisplay::drawStatusBox(const char *statusUpper, uint16_t bgColor)
 void StatusDisplay::showWaiting()
 {
     drawStatusBox("ESPERANDO PEDIDO", TFT_DARKGREY);
-    // limpiar footer
+    // clear footer
     _tft->fillRect(0, FOOTER_Y - 10, 320, 50, TFT_BLACK);
 }
 
@@ -71,7 +71,7 @@ void StatusDisplay::update(const char *status, int orderId, const char *eta)
 
     drawStatusBox(display, color);
 
-    // Footer en dos líneas (font 2 chico, ~16px alto)
+    // Footer in two lines (font 2 small, ~16px tall)
     _tft->fillRect(0, FOOTER_Y - 5, 320, 50, TFT_BLACK);
     _tft->setTextDatum(MC_DATUM);
     _tft->setTextColor(TFT_WHITE, TFT_BLACK);

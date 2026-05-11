@@ -5,13 +5,13 @@
 #include "NetworkManager.h"
 #include "NotificationSound.h"
 
-// Instancias de nuestras Clases
+// Instances of our classes
 StatusIndicator indicator(Config::PIN_RGB_LED, Config::NUM_PIXELS);
 NetworkManager network(Config::MQTT_CLIENT_ID.c_str());
 NotificationSound buzzer(Config::PIN_BUZZER, Config::BUZZER_VOLUME);
 
-// El callback se queda aquí porque es Lógica de Negocio:
-// Define QUÉ hacer con los datos recibidos.
+// Callback stays here because it's business logic:
+// defines WHAT to do with the received data.
 void mqttCallback(char *topic, byte *payload, unsigned int length)
 {
   JsonDocument doc;
@@ -33,13 +33,13 @@ void setup()
 
   indicator.begin();
   buzzer.begin();
-  // Le pasamos nuestra función de callback al manager
+  // Pass our callback function to the manager
   network.begin(mqttCallback);
 }
 
 void loop()
 {
-  // El manager se encarga de WiFi, MQTT y reconexiones automáticamente
+  // Manager handles WiFi, MQTT and reconnections automatically
   network.loop();
   buzzer.tick();
 }

@@ -17,16 +17,16 @@ namespace Config
     // Topics
     inline const String TOPIC_STATUS = "orderpulse/table/" + String(TABLE_ID) + "/status";
 
-    // ClientId único por mesa (evita que dos placas se pateen en el broker)
+    // Unique clientId per table (prevents two boards from kicking each other on the broker)
     inline const String MQTT_CLIENT_ID = "OrderPulse-Client-" + String(TABLE_ID);
 
-    // ===== Pines CYD (ESP32-2432S028) =====
-    // RGB LED interno (ánodo común, LOW = ON)
+    // ===== CYD pins (ESP32-2432S028) =====
+    // Onboard RGB LED (common-anode, LOW = ON)
     inline const int PIN_RGB_R = 4;
     inline const int PIN_RGB_G = 16;
     inline const int PIN_RGB_B = 17;
 
-    // Buzzer / SPEAK
+    // Buzzer / SPEAK pin
     inline const int PIN_BUZZER     = 26;
     inline const int BUZZER_VOLUME  = 45; // duty 0-255
 }

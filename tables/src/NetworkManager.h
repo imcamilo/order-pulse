@@ -16,7 +16,7 @@ private:
 
 public:
     NetworkManager(const char *clientId);
-    void begin(MQTT_CALLBACK_SIGNATURE); // Recibe la función callback desde afuera
+    void begin(MQTT_CALLBACK_SIGNATURE); // Receives the callback function from outside
     void loop();
     bool isConnected();
 };

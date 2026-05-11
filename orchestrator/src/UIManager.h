@@ -6,8 +6,8 @@
 class UIManager
 {
 public:
-    // Callback que dispara la UI cuando el usuario selecciona un estado.
-    // tableId es 1..NUM_TABLES, status es uno de "pending"|"preparing"|"ready".
+    // Callback fired by the UI when the user selects a status.
+    // tableId is 1..NUM_TABLES, status is one of "pending"|"preparing"|"ready".
     typedef void (*StatusSelectedFn)(int tableId, const char *status);
 
 private:
@@ -34,9 +34,9 @@ private:
     static const Button TABLE_BTNS[4];
     static const Button STATUS_BTNS[3];
     static const Button BACK_BTN;
-    // Lo que se publica por MQTT (no traducir: el subscriber espera estos strings)
+    // What gets published over MQTT (do not translate: subscribers expect these strings)
     static const char *STATUS_LABELS[3];
-    // Lo que se muestra en pantalla
+    // What gets shown on screen
     static const char *STATUS_DISPLAY[3];
 
     bool hitTest(const Button &b, int x, int y) const;

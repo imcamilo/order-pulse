@@ -7,14 +7,14 @@
 #include "StatusDisplay.h"
 #include "NotificationSound.h"
 
-// Instancias
+// Instances
 TFT_eSPI tft;
 NetworkManager   network(Config::MQTT_CLIENT_ID.c_str());
 StatusIndicator  indicator(Config::PIN_RGB_R, Config::PIN_RGB_G, Config::PIN_RGB_B);
 StatusDisplay    display(&tft, Config::TABLE_ID);
 NotificationSound buzzer(Config::PIN_BUZZER, Config::BUZZER_VOLUME);
 
-// Callback MQTT: parsea el JSON y dispara display + LED + buzzer.
+// MQTT callback: parses the JSON and triggers display + LED + buzzer.
 void mqttCallback(char *topic, byte *payload, unsigned int length)
 {
     JsonDocument doc;
@@ -36,7 +36,7 @@ void setup()
     Serial.begin(115200);
     delay(200);
     Serial.println("\n=== Order Pulse Table (CYD) ===");
-    Serial.printf("Mesa #%d\n", Config::TABLE_ID);
+    Serial.printf("Table #%d\n", Config::TABLE_ID);
 
     pinMode(TFT_BL, OUTPUT);
     digitalWrite(TFT_BL, HIGH);

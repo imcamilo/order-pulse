@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 
-// Buzzer no-bloqueante: arma una secuencia de notas y la reproduce avanzando
-// nota a nota en cada tick(). playForStatus() ignora retriggers mientras suena.
+// Non-blocking buzzer: builds a note sequence and plays it advancing
+// note by note on each tick(). playForStatus() ignores retriggers while playing.
 class NotificationSound
 {
 private:
@@ -12,7 +12,7 @@ private:
     uint8_t _volume;
     uint8_t _channel;
 
-    struct Note { uint32_t freq; uint32_t durMs; };  // freq=0 es silencio
+    struct Note { uint32_t freq; uint32_t durMs; };  // freq=0 means silence
     static constexpr int MAX_NOTES = 16;
 
     Note _seq[MAX_NOTES];
@@ -69,7 +69,7 @@ public:
         }
     }
 
-    // Despacha el sonido correspondiente al estado.
+    // Dispatches the sound matching the given status.
     void playForStatus(const char *status)
     {
         if (isPlaying()) return;
@@ -88,7 +88,7 @@ public:
         }
         else if (strcmp(status, "ready") == 0)
         {
-            // Beethoven 5ta, motivo del destino: G G G Eb (G6/Eb6)
+            // Beethoven 5th, fate motif: G G G Eb (G6/Eb6)
             static const Note seq[] = {
                 {1568, 150}, {0, 50},
                 {1568, 150}, {0, 50},

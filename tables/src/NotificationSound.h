@@ -10,7 +10,7 @@ private:
     uint8_t _volume;
     uint8_t _channel;
 
-    // Una nota de la melodía: freq=0 significa silencio.
+    // A note of the melody: freq=0 means silence.
     struct Note
     {
         uint32_t freq;
@@ -48,7 +48,7 @@ public:
 
     bool isPlaying() const { return _seqIdx < _seqLen; }
 
-    // Llamar en cada iteración de loop(): avanza la melodía sin bloquear.
+    // Call from every loop() iteration: advances the melody without blocking.
     void tick()
     {
         if (_seqIdx >= _seqLen)
@@ -79,8 +79,8 @@ public:
         }
     }
 
-    // Beethoven 5ta, motivo del destino: G G G Eb (subido una octava).
-    // Si ya está sonando, ignora el re-trigger.
+    // Beethoven 5th, fate motif: G G G Eb (one octave up).
+    // If already playing, re-triggers are ignored.
     void playOrderReady()
     {
         if (isPlaying())

@@ -1,8 +1,8 @@
 #ifndef STATUS_INDICATOR_H
 #define STATUS_INDICATOR_H
 
-// LED RGB discreto de la CYD (ánodo común — LOW enciende, HIGH apaga).
-// Mapea estados a colores: pending=azul, preparing=amarillo, ready=verde.
+// CYD discrete RGB LED (common-anode — LOW turns on, HIGH turns off).
+// Maps states to colors: pending=blue, preparing=yellow, ready=green.
 class StatusIndicator
 {
 private:
